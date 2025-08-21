@@ -7,18 +7,18 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Primary blues and grays
+        // Primary blues (darker)
         primary: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
+          50: '#eff6ff',
+          100: '#dbeafe',
+          200: '#bfdbfe',
+          300: '#93c5fd',
+          400: '#60a5fa',
+          500: '#3b82f6',
+          600: '#2563eb',
+          700: '#1d4ed8',
+          800: '#1e40af',
+          900: '#1e3a8a',
         },
         secondary: {
           50: '#f8fafc',
@@ -31,6 +31,19 @@ module.exports = {
           700: '#334155',
           800: '#1e293b',
           900: '#0f172a',
+        },
+        // Dark theme colors
+        dark: {
+          50: '#18181b',
+          100: '#27272a',
+          200: '#3f3f46',
+          300: '#52525b',
+          400: '#71717a',
+          500: '#a1a1aa',
+          600: '#d4d4d8',
+          700: '#e4e4e7',
+          800: '#f4f4f5',
+          900: '#fafafa',
         },
         // Warm accent colors
         accent: {
@@ -68,6 +81,10 @@ module.exports = {
         'base': ['1rem', { lineHeight: '1.5rem' }],
         'lg': ['1.125rem', { lineHeight: '1.75rem' }],
         'xl': ['1.25rem', { lineHeight: '1.75rem' }],
+      },
+      spacing: {
+        '18': '4.5rem',
+        '88': '22rem',
       }
     },
   },

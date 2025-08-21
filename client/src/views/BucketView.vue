@@ -1,39 +1,39 @@
 <template>
-  <div class="space-y-6">
+  <div class="space-y-4">
     <!-- Header with Breadcrumb -->
     <div class="flex items-center justify-between">
       <div class="min-w-0 flex-1">
-        <nav class="flex items-center space-x-2 text-sm mb-2">
+        <nav class="flex items-center space-x-2 text-sm mb-1">
           <router-link 
             to="/" 
-            class="text-secondary-500 hover:text-secondary-700 font-medium transition-colors"
+            class="text-dark-500 hover:text-dark-700 font-medium transition-colors"
           >
             Buckets
           </router-link>
-          <svg class="w-4 h-4 text-secondary-400" fill="currentColor" viewBox="0 0 20 20">
+          <svg class="w-3 h-3 text-dark-400" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 111.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
           </svg>
-          <span class="text-secondary-700 font-semibold truncate">{{ bucketName }}</span>
+          <span class="text-dark-700 font-semibold truncate">{{ bucketName }}</span>
         </nav>
-        <h1 class="text-xl font-bold text-secondary-900">{{ bucketName }}</h1>
-        <p class="text-sm text-secondary-600 mt-1">Objects and metadata</p>
+        <h1 class="text-lg font-bold text-dark-800">{{ bucketName }}</h1>
+        <p class="text-sm text-dark-600 mt-0.5">Objects and metadata</p>
       </div>
       
       <!-- Actions -->
-      <div class="flex items-center space-x-3">
+      <div class="flex items-center space-x-2">
         <button
           @click="toggleSearch"
           :class="[
-            'inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg border transition-colors',
+            'inline-flex items-center px-2 py-1.5 text-sm font-medium rounded border transition-colors',
             showSearch 
-              ? 'bg-primary-100 text-primary-700 border-primary-200 hover:bg-primary-200' 
-              : 'bg-white text-secondary-700 border-secondary-300 hover:bg-secondary-50'
+              ? 'bg-primary-600 text-white border-primary-600 hover:bg-primary-700' 
+              : 'bg-dark-100 text-dark-700 border-dark-300 hover:bg-dark-200'
           ]"
         >
-          <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <svg class="w-3 h-3 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
-          {{ showSearch ? 'Hide Filters' : 'Filter Objects' }}
+          {{ showSearch ? 'Hide' : 'Filter' }}
         </button>
       </div>
     </div>

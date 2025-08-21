@@ -1,12 +1,12 @@
 <template>
-  <div class="bg-white rounded-lg border border-secondary-200 shadow-sm overflow-hidden">
+  <div class="bg-dark-100 border border-dark-200 rounded shadow-sm overflow-hidden">
     <!-- Loading State -->
-    <div v-if="loading" class="flex items-center justify-center py-12">
+    <div v-if="loading" class="flex items-center justify-center py-10">
       <div class="flex items-center space-x-2">
-        <div class="w-3 h-3 bg-primary-600 rounded-full animate-bounce"></div>
-        <div class="w-3 h-3 bg-primary-600 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
-        <div class="w-3 h-3 bg-primary-600 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-        <span class="ml-3 text-sm text-secondary-600">Loading objects...</span>
+        <div class="w-2 h-2 bg-primary-600 rounded-full animate-bounce"></div>
+        <div class="w-2 h-2 bg-primary-600 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+        <div class="w-2 h-2 bg-primary-600 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+        <span class="ml-2 text-sm text-dark-600">Loading...</span>
       </div>
     </div>
 
@@ -37,76 +37,76 @@
 
     <!-- Table -->
     <div v-else-if="objects.length > 0" class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-secondary-200">
-        <thead class="bg-secondary-50">
+      <table class="min-w-full divide-y divide-dark-200">
+        <thead class="bg-dark-200">
           <tr>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider">
-              Object Name
+            <th class="px-3 py-2 text-left text-xs font-semibold text-dark-700 uppercase tracking-wider">
+              Name
             </th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider">
+            <th class="px-3 py-2 text-left text-xs font-semibold text-dark-700 uppercase tracking-wider">
               Size
             </th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider">
-              Last Modified
+            <th class="px-3 py-2 text-left text-xs font-semibold text-dark-700 uppercase tracking-wider">
+              Modified
             </th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider">
+            <th class="px-3 py-2 text-left text-xs font-semibold text-dark-700 uppercase tracking-wider">
               Type
             </th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider">
-              Storage Class
+            <th class="px-3 py-2 text-left text-xs font-semibold text-dark-700 uppercase tracking-wider">
+              Class
             </th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider">
-              Metadata
+            <th class="px-3 py-2 text-left text-xs font-semibold text-dark-700 uppercase tracking-wider">
+              Meta
             </th>
           </tr>
         </thead>
-        <tbody class="bg-white divide-y divide-secondary-100">
-          <tr v-for="object in objects" :key="object.Key" class="hover:bg-secondary-50 transition-colors">
-            <td class="px-4 py-3">
+        <tbody class="bg-dark-50 divide-y divide-dark-200">
+          <tr v-for="object in objects" :key="object.Key" class="hover:bg-dark-200 transition-colors">
+            <td class="px-3 py-2">
               <div class="flex items-center">
-                <div class="w-6 h-6 bg-secondary-100 rounded flex items-center justify-center flex-shrink-0">
-                  <svg class="w-3 h-3 text-secondary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <div class="w-5 h-5 bg-dark-300 rounded flex items-center justify-center flex-shrink-0">
+                  <svg class="w-2.5 h-2.5 text-dark-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                 </div>
-                <div class="ml-3 min-w-0 flex-1">
-                  <p class="text-sm font-medium text-secondary-900 truncate" :title="object.Key">
+                <div class="ml-2 min-w-0 flex-1">
+                  <p class="text-sm font-medium text-dark-800 truncate" :title="object.Key">
                     {{ object.Key }}
                   </p>
                 </div>
               </div>
             </td>
-            <td class="px-4 py-3 whitespace-nowrap">
-              <span class="text-sm text-secondary-900 font-mono">
+            <td class="px-3 py-2 whitespace-nowrap">
+              <span class="text-sm text-dark-700 font-mono">
                 {{ formatFileSize(object.Size || object.metadata?.contentLength) }}
               </span>
             </td>
-            <td class="px-4 py-3 whitespace-nowrap">
-              <span class="text-sm text-secondary-600 font-mono">
+            <td class="px-3 py-2 whitespace-nowrap">
+              <span class="text-sm text-dark-600 font-mono">
                 {{ formatDate(object.LastModified || object.metadata?.lastModified) }}
               </span>
             </td>
-            <td class="px-4 py-3 whitespace-nowrap">
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
+            <td class="px-3 py-2 whitespace-nowrap">
+              <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary-100 text-primary-800">
                 {{ object.metadata?.contentType || 'Unknown' }}
               </span>
             </td>
-            <td class="px-4 py-3 whitespace-nowrap">
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-warm-100 text-warm-800">
+            <td class="px-3 py-2 whitespace-nowrap">
+              <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-warm-100 text-warm-800">
                 {{ object.StorageClass || object.metadata?.storageClass || 'STANDARD' }}
               </span>
             </td>
-            <td class="px-4 py-3">
+            <td class="px-3 py-2">
               <div v-if="hasCustomMetadata(object.metadata)" class="flex flex-wrap gap-1">
                 <span 
                   v-for="[key, value] in getCustomMetadataEntries(object.metadata)" 
                   :key="key"
-                  class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-accent-100 text-accent-800"
+                  class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-accent-100 text-accent-800"
                 >
                   {{ key }}: {{ value }}
                 </span>
               </div>
-              <span v-else class="text-xs text-secondary-400">—</span>
+              <span v-else class="text-xs text-dark-400">—</span>
             </td>
           </tr>
         </tbody>

@@ -1,25 +1,24 @@
 <template>
-  <div class="space-y-6">
+  <div class="space-y-4">
     <!-- Header -->
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="text-xl font-bold text-secondary-900">S3 Buckets</h1>
-        <p class="text-sm text-secondary-600 mt-1">Browse and analyze your AWS S3 storage buckets</p>
+        <h1 class="text-lg font-bold text-dark-800">S3 Buckets</h1>
+        <p class="text-sm text-dark-600 mt-0.5">Browse and analyze your AWS S3 storage buckets</p>
       </div>
-      <div v-if="!loading && buckets.length > 0" class="text-sm text-secondary-500">
+      <div v-if="!loading && buckets.length > 0" class="text-sm text-dark-500">
         {{ filteredAndSortedBuckets.length }} of {{ buckets.length }} bucket{{ buckets.length !== 1 ? 's' : '' }}
       </div>
     </div>
 
     <!-- Search and Sort Controls -->
-    <div v-if="!loading && buckets.length > 0" class="bg-white border border-secondary-200 rounded-lg shadow-sm p-4">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0 sm:space-x-4">
+    <div v-if="!loading && buckets.length > 0" class="bg-dark-100 border border-dark-200 rounded shadow-sm p-3">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0 sm:space-x-3">
         <!-- Search -->
-        <div class="flex-1 max-w-md">
-          <label for="search" class="sr-only">Search buckets</label>
+        <div class="flex-1 max-w-sm">
           <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg class="h-4 w-4 text-secondary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
+              <svg class="h-4 w-4 text-dark-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
@@ -27,30 +26,30 @@
               id="search"
               v-model="searchQuery"
               type="text"
-              placeholder="Search buckets by name..."
-              class="block w-full pl-10 pr-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              placeholder="Search buckets..."
+              class="block w-full pl-8 pr-2 py-1.5 border border-dark-300 rounded text-sm placeholder-dark-500 bg-dark-50 text-dark-800 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
             />
           </div>
         </div>
 
         <!-- Sort Controls -->
-        <div class="flex items-center space-x-3">
-          <label class="text-sm font-medium text-secondary-700">Sort by:</label>
+        <div class="flex items-center space-x-2">
+          <label class="text-sm font-medium text-dark-700">Sort:</label>
           <select
             v-model="sortBy"
-            class="border border-secondary-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            class="border border-dark-300 rounded px-2 py-1.5 text-sm bg-dark-50 text-dark-800 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
           >
             <option value="name">Name</option>
-            <option value="creationDate">Creation Date</option>
-            <option value="objectCount">Object Count</option>
+            <option value="creationDate">Date</option>
+            <option value="objectCount">Objects</option>
           </select>
           <button
             @click="toggleSortOrder"
-            class="p-2 border border-secondary-300 rounded-lg hover:bg-secondary-50 focus:outline-none focus:ring-2 focus:ring-primary-500"
+            class="p-1.5 border border-dark-300 rounded hover:bg-dark-200 focus:outline-none focus:ring-1 focus:ring-primary-500"
             :title="sortOrder === 'asc' ? 'Sort descending' : 'Sort ascending'"
           >
             <svg 
-              class="w-4 h-4 text-secondary-600 transition-transform" 
+              class="w-3 h-3 text-dark-600 transition-transform" 
               :class="{ 'rotate-180': sortOrder === 'desc' }"
               fill="none" 
               viewBox="0 0 24 24" 
@@ -58,6 +57,14 @@
             >
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
             </svg>
+          </button>
+          <button
+            @click="resetFiltersAndSort"
+            class="px-2 py-1.5 text-xs font-medium text-dark-600 hover:text-dark-800 hover:bg-dark-200 rounded transition-colors"
+            :disabled="!hasActiveFiltersOrSort"
+            :class="{ 'opacity-50 cursor-not-allowed': !hasActiveFiltersOrSort }"
+          >
+            Reset
           </button>
         </div>
       </div>
@@ -96,37 +103,37 @@
     </div>
 
     <!-- Bucket List -->
-    <div v-else-if="filteredAndSortedBuckets.length > 0" class="bg-white rounded-lg border border-secondary-200 shadow-sm overflow-hidden">
-      <div class="divide-y divide-secondary-100">
+    <div v-else-if="filteredAndSortedBuckets.length > 0" class="bg-dark-100 border border-dark-200 rounded shadow-sm overflow-hidden">
+      <div class="divide-y divide-dark-200">
         <div
           v-for="bucket in filteredAndSortedBuckets"
           :key="bucket.Name"
-          class="hover:bg-secondary-50 cursor-pointer transition-colors"
+          class="hover:bg-dark-200 cursor-pointer transition-colors"
           @click="selectBucket(bucket.Name)"
         >
-          <div class="px-6 py-4 flex items-center justify-between">
+          <div class="px-4 py-3 flex items-center justify-between">
             <div class="flex items-center min-w-0 flex-1">
-              <div class="w-8 h-8 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <svg class="w-4 h-4 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <div class="w-6 h-6 bg-primary-600 rounded flex items-center justify-center flex-shrink-0">
+                <svg class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                 </svg>
               </div>
-              <div class="ml-4 min-w-0 flex-1">
-                <h3 class="text-sm font-semibold text-secondary-900 truncate">{{ bucket.Name }}</h3>
-                <div class="flex items-center space-x-4 mt-1">
-                  <p class="text-xs text-secondary-500 font-mono">Created {{ formatDate(bucket.CreationDate) }}</p>
-                  <p v-if="objectCounts[bucket.Name] !== undefined" class="text-xs text-secondary-500">
+              <div class="ml-3 min-w-0 flex-1">
+                <h3 class="text-sm font-semibold text-dark-800 truncate">{{ bucket.Name }}</h3>
+                <div class="flex items-center space-x-3 mt-0.5">
+                  <p class="text-xs text-dark-500 font-mono">{{ formatDate(bucket.CreationDate) }}</p>
+                  <p v-if="objectCounts[bucket.Name] !== undefined" class="text-xs text-dark-500">
                     {{ objectCounts[bucket.Name] }} object{{ objectCounts[bucket.Name] !== 1 ? 's' : '' }}
                   </p>
                   <div v-else-if="sortBy === 'objectCount'" class="flex items-center">
-                    <div class="w-3 h-3 bg-secondary-300 rounded-full animate-pulse"></div>
-                    <span class="ml-1 text-xs text-secondary-400">counting...</span>
+                    <div class="w-2 h-2 bg-dark-400 rounded-full animate-pulse"></div>
+                    <span class="ml-1 text-xs text-dark-400">...</span>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="ml-4 flex-shrink-0">
-              <svg class="w-4 h-4 text-secondary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="ml-3 flex-shrink-0">
+              <svg class="w-3 h-3 text-dark-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
               </svg>
             </div>
@@ -136,31 +143,31 @@
     </div>
 
     <!-- No Results State -->
-    <div v-else-if="buckets.length > 0 && filteredAndSortedBuckets.length === 0" class="text-center py-12">
-      <div class="w-12 h-12 bg-secondary-100 rounded-lg flex items-center justify-center mx-auto">
-        <svg class="w-6 h-6 text-secondary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <div v-else-if="buckets.length > 0 && filteredAndSortedBuckets.length === 0" class="text-center py-10">
+      <div class="w-10 h-10 bg-dark-200 rounded flex items-center justify-center mx-auto">
+        <svg class="w-5 h-5 text-dark-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
       </div>
-      <h3 class="text-sm font-medium text-secondary-900 mt-4">No buckets match your search</h3>
-      <p class="text-sm text-secondary-500 mt-2">Try adjusting your search terms or clear the filter.</p>
+      <h3 class="text-sm font-medium text-dark-800 mt-3">No buckets match your search</h3>
+      <p class="text-sm text-dark-600 mt-1">Try adjusting your search terms or clear the filter.</p>
       <button
         @click="searchQuery = ''"
-        class="mt-3 text-sm font-medium text-primary-600 hover:text-primary-700 underline"
+        class="mt-2 text-sm font-medium text-primary-600 hover:text-primary-700 underline"
       >
         Clear search
       </button>
     </div>
 
     <!-- Empty State -->
-    <div v-else class="text-center py-12">
-      <div class="w-12 h-12 bg-secondary-100 rounded-lg flex items-center justify-center mx-auto">
-        <svg class="w-6 h-6 text-secondary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <div v-else class="text-center py-10">
+      <div class="w-10 h-10 bg-dark-200 rounded flex items-center justify-center mx-auto">
+        <svg class="w-5 h-5 text-dark-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
         </svg>
       </div>
-      <h3 class="text-sm font-medium text-secondary-900 mt-4">No buckets found</h3>
-      <p class="text-sm text-secondary-500 mt-2">You don't have access to any S3 buckets or none exist in this account.</p>
+      <h3 class="text-sm font-medium text-dark-800 mt-3">No buckets found</h3>
+      <p class="text-sm text-dark-600 mt-1">You don't have access to any S3 buckets or none exist in this account.</p>
     </div>
   </div>
 </template>
@@ -182,7 +189,11 @@ export default {
     }
   },
   mounted() {
+    this.loadSettingsFromStorage()
     this.loadBuckets()
+  },
+  beforeUnmount() {
+    this.saveSettingsToStorage()
   },
   computed: {
     filteredAndSortedBuckets() {
@@ -221,6 +232,9 @@ export default {
         if (valueA > valueB) return this.sortOrder === 'asc' ? 1 : -1
         return 0
       })
+    },
+    hasActiveFiltersOrSort() {
+      return this.searchQuery !== '' || this.sortBy !== 'name' || this.sortOrder !== 'asc'
     }
   },
   watch: {
@@ -228,6 +242,13 @@ export default {
       if (newSortBy === 'objectCount') {
         this.loadObjectCounts()
       }
+      this.saveSettingsToStorage()
+    },
+    sortOrder() {
+      this.saveSettingsToStorage()
+    },
+    searchQuery() {
+      this.saveSettingsToStorage()
     }
   },
   methods: {
@@ -271,6 +292,33 @@ export default {
             this.objectCounts[bucket.Name] = 'Error'
           }
         }
+      }
+    },
+    resetFiltersAndSort() {
+      this.searchQuery = ''
+      this.sortBy = 'name'
+      this.sortOrder = 'asc'
+      this.saveSettingsToStorage()
+    },
+    saveSettingsToStorage() {
+      const settings = {
+        searchQuery: this.searchQuery,
+        sortBy: this.sortBy,
+        sortOrder: this.sortOrder
+      }
+      localStorage.setItem('s3-browser-settings', JSON.stringify(settings))
+    },
+    loadSettingsFromStorage() {
+      try {
+        const stored = localStorage.getItem('s3-browser-settings')
+        if (stored) {
+          const settings = JSON.parse(stored)
+          this.searchQuery = settings.searchQuery || ''
+          this.sortBy = settings.sortBy || 'name'
+          this.sortOrder = settings.sortOrder || 'asc'
+        }
+      } catch (error) {
+        console.warn('Failed to load settings from storage:', error)
       }
     }
   }
