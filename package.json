@@ -1,0 +1,28 @@
+{
+  "name": "s3-metadata-browser",
+  "version": "1.0.0",
+  "description": "Web app to browse AWS S3 buckets and query object metadata",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "client": "cd client && npm run serve",
+    "dev:server": "nodemon server.js",
+    "dev:client": "cd client && npm run serve",
+    "build": "cd client && npm run build"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "@aws-sdk/client-s3": "^3.450.0",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": ["aws", "s3", "metadata", "browser", "vue", "nodejs"],
+  "author": "",
+  "license": "MIT"
+}
