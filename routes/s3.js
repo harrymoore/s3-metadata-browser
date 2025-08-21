@@ -99,4 +99,46 @@ router.get('/buckets/:bucketName/objects-with-metadata', async (req, res) => {
   }
 });
 
+// Get detailed metadata for a specific object
+router.get('/buckets/:bucketName/objects/:objectKey/metadata', async (req, res) => {
+  try {
+    const { bucketName, objectKey } = req.params;
+    const decodedKey = decodeURIComponent(objectKey);
+    
+    const metadata = await s3Service.getObjectMetadata(bucketName, decodedKey);
+    res.json(metadata);
+  } catch (error) {
+    console.error('Error getting object metadata:', error);
+    res.status(500).json({ 
+      error: 'Failed to get object metadata', 
+      message: error.message 
+    });
+  }
+});
+
+// Update metadata for a specific object
+router.put('/buckets/:bucketName/objects/:objectKey/metadata', async (req, res) => {
+  try {
+    const { bucketName, objectKey } = req.params;
+    const { metadata } = req.body;
+    const decodedKey = decodeURIComponent(objectKey);
+    
+    if (!metadata || typeof metadata !== 'object') {
+      return res.status(400).json({ 
+        error: 'Invalid metadata', 
+        message: 'Metadata must be an object' 
+      });
+    }
+    
+    const result = await s3Service.updateObjectMetadata(bucketName, decodedKey, metadata);
+    res.json(result);
+  } catch (error) {
+    console.error('Error updating object metadata:', error);
+    res.status(500).json({ 
+      error: 'Failed to update object metadata', 
+      message: error.message 
+    });
+  }
+});
+
 module.exports = router;

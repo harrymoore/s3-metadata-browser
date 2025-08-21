@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import BucketView from '../views/BucketView.vue'
+import ObjectDetail from '../views/ObjectDetail.vue'
 
 const routes = [
   {
@@ -12,6 +13,12 @@ const routes = [
     path: '/bucket/:bucketName',
     name: 'BucketView',
     component: BucketView,
+    props: true
+  },
+  {
+    path: '/bucket/:bucketName/object/:objectKey',
+    name: 'ObjectDetail',
+    component: ObjectDetail,
     props: true
   }
 ]

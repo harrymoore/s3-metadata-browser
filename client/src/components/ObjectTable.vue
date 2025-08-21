@@ -70,9 +70,13 @@
                   </svg>
                 </div>
                 <div class="ml-2 min-w-0 flex-1">
-                  <p class="text-sm font-medium text-dark-900 truncate" :title="object.Key">
+                  <router-link 
+                    :to="`/bucket/${$route.params.bucketName}/object/${encodeURIComponent(object.Key)}`"
+                    class="text-sm font-medium text-primary-600 hover:text-primary-800 truncate block"
+                    :title="object.Key"
+                  >
                     {{ object.Key }}
-                  </p>
+                  </router-link>
                 </div>
               </div>
             </td>
@@ -145,6 +149,9 @@ export default {
   },
   emits: ['refresh'],
   methods: {
+    encodeURIComponent(str) {
+      return encodeURIComponent(str)
+    },
     formatFileSize(bytes) {
       if (!bytes) return 'Unknown'
       const sizes = ['B', 'KB', 'MB', 'GB', 'TB']
