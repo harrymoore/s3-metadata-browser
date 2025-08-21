@@ -119,7 +119,26 @@
                 </svg>
               </div>
               <div class="ml-3 min-w-0 flex-1">
-                <h3 class="text-sm font-semibold text-dark-900 truncate">{{ bucket.Name }}</h3>
+                <div class="flex items-center space-x-2">
+                  <h3 class="text-sm font-semibold text-dark-900 truncate">{{ bucket.Name }}</h3>
+                  <div v-if="bucket.metadataConfiguration" class="flex items-center space-x-1">
+                    <div 
+                      v-if="bucket.metadataConfiguration.inventory.length > 0"
+                      class="w-2 h-2 bg-blue-500 rounded-full"
+                      title="S3 Inventory enabled"
+                    ></div>
+                    <div 
+                      v-if="bucket.metadataConfiguration.analytics.length > 0"
+                      class="w-2 h-2 bg-green-500 rounded-full"
+                      title="S3 Analytics enabled"
+                    ></div>
+                    <div 
+                      v-if="bucket.metadataConfiguration.metrics.length > 0"
+                      class="w-2 h-2 bg-orange-500 rounded-full"
+                      title="S3 Metrics enabled"
+                    ></div>
+                  </div>
+                </div>
                 <div class="flex items-center space-x-3 mt-0.5">
                   <p class="text-xs text-dark-600 font-mono">{{ formatDate(bucket.CreationDate) }}</p>
                   <p v-if="objectCounts[bucket.Name] !== undefined" class="text-xs text-dark-600">
@@ -128,6 +147,34 @@
                   <div v-else-if="sortBy === 'objectCount'" class="flex items-center">
                     <div class="w-2 h-2 bg-dark-400 rounded-full animate-pulse"></div>
                     <span class="ml-1 text-xs text-dark-400">...</span>
+                  </div>
+                </div>
+                <div v-if="bucket.metadataConfiguration" class="mt-1">
+                  <div class="flex flex-wrap gap-1">
+                    <span 
+                      v-for="config in bucket.metadataConfiguration.inventory" 
+                      :key="`inv-${config.id}`"
+                      class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800"
+                      :title="`Inventory: ${config.frequency} frequency, ${config.format} format`"
+                    >
+                      📊 {{ config.id }}
+                    </span>
+                    <span 
+                      v-for="config in bucket.metadataConfiguration.analytics" 
+                      :key="`ana-${config.id}`"
+                      class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800"
+                      title="S3 Storage Class Analysis"
+                    >
+                      📈 {{ config.id }}
+                    </span>
+                    <span 
+                      v-for="config in bucket.metadataConfiguration.metrics" 
+                      :key="`met-${config.id}`"
+                      class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-orange-100 text-orange-800"
+                      :title="`Metrics: ${config.filter?.prefix ? 'Prefix: ' + config.filter.prefix : 'All objects'}`"
+                    >
+                      📏 {{ config.id }}
+                    </span>
                   </div>
                 </div>
               </div>

@@ -1,4 +1,4 @@
-const { S3Client, ListBucketsCommand, ListObjectsV2Command, HeadObjectCommand, GetBucketLocationCommand, CopyObjectCommand } = require('@aws-sdk/client-s3');
+const { S3Client, ListBucketsCommand, ListObjectsV2Command, HeadObjectCommand, GetBucketLocationCommand, CopyObjectCommand, GetBucketInventoryConfigurationCommand, GetBucketAnalyticsConfigurationCommand, GetBucketMetricsConfigurationCommand, ListBucketInventoryConfigurationsCommand, ListBucketAnalyticsConfigurationsCommand, ListBucketMetricsConfigurationsCommand } = require('@aws-sdk/client-s3');
 
 class S3Service {
   constructor() {
