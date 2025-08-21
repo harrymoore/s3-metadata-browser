@@ -1,4 +1,4 @@
-const { S3Client, ListBucketsCommand, ListObjectsV2Command, HeadObjectCommand } = require('@aws-sdk/client-s3');
+const { S3Client, ListBucketsCommand, ListObjectsV2Command, HeadObjectCommand, GetBucketLocationCommand } = require('@aws-sdk/client-s3');
 
 class S3Service {
   constructor() {
@@ -11,6 +11,39 @@ class S3Service {
       // 3. IAM roles (if running on EC2/ECS/Lambda)
       // 4. Other AWS credential providers
     });
+    
+    // Cache for region-specific clients
+    this.regionClients = new Map();
+    this.bucketRegions = new Map();
+  }
+
+  // Get or create a region-specific S3 client
+  getRegionClient(region) {
+    if (!this.regionClients.has(region)) {
+      this.regionClients.set(region, new S3Client({
+        region: region,
+      }));
+    }
+    return this.regionClients.get(region);
+  }
+
+  // Get the region of a bucket
+  async getBucketRegion(bucketName) {
+    if (this.bucketRegions.has(bucketName)) {
+      return this.bucketRegions.get(bucketName);
+    }
+
+    try {
+      const command = new GetBucketLocationCommand({ Bucket: bucketName });
+      const response = await this.s3Client.send(command);
+      // AWS returns null for us-east-1, so handle that case
+      const region = response.LocationConstraint || 'us-east-1';
+      this.bucketRegions.set(bucketName, region);
+      return region;
+    } catch (error) {
+      console.warn(`Could not determine region for bucket ${bucketName}, using default`);
+      return process.env.AWS_REGION || 'us-east-1';
+    }
   }
 
   async listBuckets() {
@@ -26,6 +59,9 @@ class S3Service {
 
   async listObjects(bucketName, prefix = '', maxKeys = 1000, continuationToken = null) {
     try {
+      // First try with default client
+      let client = this.s3Client;
+      
       const params = {
         Bucket: bucketName,
         MaxKeys: maxKeys,
@@ -36,15 +72,35 @@ class S3Service {
         params.ContinuationToken = continuationToken;
       }
 
-      const command = new ListObjectsV2Command(params);
-      const response = await this.s3Client.send(command);
-      
-      return {
-        objects: response.Contents || [],
-        isTruncated: response.IsTruncated,
-        nextContinuationToken: response.NextContinuationToken,
-        commonPrefixes: response.CommonPrefixes || []
-      };
+      try {
+        const command = new ListObjectsV2Command(params);
+        const response = await client.send(command);
+        
+        return {
+          objects: response.Contents || [],
+          isTruncated: response.IsTruncated,
+          nextContinuationToken: response.NextContinuationToken,
+          commonPrefixes: response.CommonPrefixes || []
+        };
+      } catch (redirectError) {
+        // If we get a redirect error, try with the correct region
+        if (redirectError.Code === 'PermanentRedirect') {
+          console.log(`Bucket ${bucketName} requires region-specific client, retrying...`);
+          const bucketRegion = await this.getBucketRegion(bucketName);
+          client = this.getRegionClient(bucketRegion);
+          
+          const command = new ListObjectsV2Command(params);
+          const response = await client.send(command);
+          
+          return {
+            objects: response.Contents || [],
+            isTruncated: response.IsTruncated,
+            nextContinuationToken: response.NextContinuationToken,
+            commonPrefixes: response.CommonPrefixes || []
+          };
+        }
+        throw redirectError;
+      }
     } catch (error) {
       console.error('Error listing objects:', error);
       throw new Error(`Failed to list objects: ${error.message}`);
@@ -53,26 +109,59 @@ class S3Service {
 
   async getObjectMetadata(bucketName, key) {
     try {
-      const command = new HeadObjectCommand({
-        Bucket: bucketName,
-        Key: key,
-      });
-      const response = await this.s3Client.send(command);
+      // First try with default client
+      let client = this.s3Client;
       
-      return {
-        contentType: response.ContentType,
-        contentLength: response.ContentLength,
-        lastModified: response.LastModified,
-        etag: response.ETag,
-        metadata: response.Metadata || {},
-        storageClass: response.StorageClass,
-        cacheControl: response.CacheControl,
-        contentEncoding: response.ContentEncoding,
-        expires: response.Expires,
-        websiteRedirectLocation: response.WebsiteRedirectLocation,
-        serverSideEncryption: response.ServerSideEncryption,
-        tags: response.TagSet || []
-      };
+      try {
+        const command = new HeadObjectCommand({
+          Bucket: bucketName,
+          Key: key,
+        });
+        const response = await client.send(command);
+        
+        return {
+          contentType: response.ContentType,
+          contentLength: response.ContentLength,
+          lastModified: response.LastModified,
+          etag: response.ETag,
+          metadata: response.Metadata || {},
+          storageClass: response.StorageClass,
+          cacheControl: response.CacheControl,
+          contentEncoding: response.ContentEncoding,
+          expires: response.Expires,
+          websiteRedirectLocation: response.WebsiteRedirectLocation,
+          serverSideEncryption: response.ServerSideEncryption,
+          tags: response.TagSet || []
+        };
+      } catch (redirectError) {
+        // If we get a redirect error, try with the correct region
+        if (redirectError.Code === 'PermanentRedirect') {
+          const bucketRegion = await this.getBucketRegion(bucketName);
+          client = this.getRegionClient(bucketRegion);
+          
+          const command = new HeadObjectCommand({
+            Bucket: bucketName,
+            Key: key,
+          });
+          const response = await client.send(command);
+          
+          return {
+            contentType: response.ContentType,
+            contentLength: response.ContentLength,
+            lastModified: response.LastModified,
+            etag: response.ETag,
+            metadata: response.Metadata || {},
+            storageClass: response.StorageClass,
+            cacheControl: response.CacheControl,
+            contentEncoding: response.ContentEncoding,
+            expires: response.Expires,
+            websiteRedirectLocation: response.WebsiteRedirectLocation,
+            serverSideEncryption: response.ServerSideEncryption,
+            tags: response.TagSet || []
+          };
+        }
+        throw redirectError;
+      }
     } catch (error) {
       console.error('Error getting object metadata:', error);
       throw new Error(`Failed to get object metadata: ${error.message}`);
