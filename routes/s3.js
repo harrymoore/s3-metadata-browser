@@ -12,26 +12,32 @@ router.get('/buckets', async (req, res) => {
     
     if (includeMetadataConfig) {
       // Get metadata configuration for each bucket (in parallel for better performance)
-      const bucketsWithConfig = await Promise.all(
-        buckets.map(async (bucket) => {
-          try {
-            const metadataConfig = await s3Service.getBucketMetadataConfiguration(bucket.Name);
-            return {
-              ...bucket,
-              metadataConfiguration: metadataConfig
-            };
-          } catch (error) {
-            console.warn(`Failed to get metadata config for ${bucket.Name}:`, error.message);
-            return bucket; // Return bucket without metadata config on error
-          }
-        })
-      );
-      
-      res.json(bucketsWithConfig);
+      try {
+        const bucketsWithConfig = await Promise.all(
+          buckets.map(async (bucket) => {
+            try {
+              const metadataConfig = await s3Service.getBucketMetadataConfiguration(bucket.Name);
+              return {
+                ...bucket,
+                metadataConfiguration: metadataConfig
+              };
+            } catch (error) {
+              console.warn(`Failed to get metadata config for ${bucket.Name}:`, error.message);
+              return bucket; // Return bucket without metadata config on error
+            }
+          })
+        );
+        
+        res.json(bucketsWithConfig);
+      } catch (error) {
+        console.warn('Error getting metadata configurations, returning basic buckets:', error.message);
+        res.json(buckets); // Fallback to basic buckets if metadata config fails
+      }
     } else {
       res.json(buckets);
     }
   } catch (error) {
+    console.error('Error in /buckets route:', error);
     res.status(500).json({ error: error.message });
   }
 });

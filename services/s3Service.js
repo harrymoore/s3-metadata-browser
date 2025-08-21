@@ -1,10 +1,10 @@
-const { S3Client, ListBucketsCommand, ListObjectsV2Command, HeadObjectCommand, GetBucketLocationCommand, CopyObjectCommand, GetBucketInventoryConfigurationCommand, GetBucketAnalyticsConfigurationCommand, GetBucketMetricsConfigurationCommand, ListBucketInventoryConfigurationsCommand, ListBucketAnalyticsConfigurationsCommand, ListBucketMetricsConfigurationsCommand } = require('@aws-sdk/client-s3');
+const { S3Client, ListBucketsCommand, ListObjectsV2Command, HeadObjectCommand, GetBucketLocationCommand, CopyObjectCommand } = require('@aws-sdk/client-s3');
 
 class S3Service {
   constructor() {
     // Use AWS default credential chain (supports ~/.aws/credentials, environment variables, IAM roles, etc.)
     this.s3Client = new S3Client({
-      region: process.env.AWS_REGION || 'us-east-1',
+      region: process.env.AWS_REGION || 'us-east-2',
       // Credentials will be automatically loaded from AWS credential chain:
       // 1. Environment variables (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
       // 2. AWS credentials file (~/.aws/credentials) - default profile
@@ -48,11 +48,19 @@ class S3Service {
 
   async listBuckets() {
     try {
+      console.log('Attempting to list buckets...');
       const command = new ListBucketsCommand({});
       const response = await this.s3Client.send(command);
+      console.log('Successfully listed buckets:', response.Buckets?.length || 0);
       return response.Buckets || [];
     } catch (error) {
       console.error('Error listing buckets:', error);
+      console.error('Error details:', {
+        name: error.name,
+        code: error.Code,
+        statusCode: error.$response?.statusCode,
+        region: error.$response?.config?.region
+      });
       throw new Error(`Failed to list buckets: ${error.message}`);
     }
   }
@@ -239,96 +247,9 @@ class S3Service {
   }
 
   async getBucketMetadataConfiguration(bucketName) {
-    try {
-      let client = this.s3Client;
-      
-      // Get the correct client for the bucket's region
-      try {
-        const bucketRegion = await this.getBucketRegion(bucketName);
-        client = this.getRegionClient(bucketRegion);
-      } catch (error) {
-        console.warn(`Could not determine bucket region for ${bucketName}, using default client:`, error.message);
-      }
-
-      const metadataConfig = {
-        inventory: [],
-        analytics: [],
-        metrics: []
-      };
-
-      // Get Inventory Configurations
-      try {
-        const inventoryCommand = new ListBucketInventoryConfigurationsCommand({ Bucket: bucketName });
-        const inventoryResponse = await client.send(inventoryCommand);
-        if (inventoryResponse.InventoryConfigurationList) {
-          metadataConfig.inventory = inventoryResponse.InventoryConfigurationList.map(config => ({
-            id: config.Id,
-            frequency: config.Schedule?.Frequency,
-            format: config.Destination?.S3BucketDestination?.Format,
-            includedFields: config.OptionalFields || [],
-            enabled: config.IsEnabled
-          }));
-        }
-      } catch (error) {
-        // Inventory configurations may not exist or user may not have permissions
-        if (!error.name?.includes('NoSuchConfiguration') && !error.name?.includes('AccessDenied')) {
-          console.warn(`Failed to get inventory config for ${bucketName}:`, error.message);
-        }
-      }
-
-      // Get Analytics Configurations
-      try {
-        const analyticsCommand = new ListBucketAnalyticsConfigurationsCommand({ Bucket: bucketName });
-        const analyticsResponse = await client.send(analyticsCommand);
-        if (analyticsResponse.AnalyticsConfigurationList) {
-          metadataConfig.analytics = analyticsResponse.AnalyticsConfigurationList.map(config => ({
-            id: config.Id,
-            storageClassAnalysis: config.StorageClassAnalysis ? {
-              dataExport: config.StorageClassAnalysis.DataExport ? {
-                format: config.StorageClassAnalysis.DataExport.OutputSchemaVersion,
-                destination: config.StorageClassAnalysis.DataExport.Destination?.S3BucketDestination?.Bucket
-              } : null
-            } : null
-          }));
-        }
-      } catch (error) {
-        // Analytics configurations may not exist or user may not have permissions
-        if (!error.name?.includes('NoSuchConfiguration') && !error.name?.includes('AccessDenied')) {
-          console.warn(`Failed to get analytics config for ${bucketName}:`, error.message);
-        }
-      }
-
-      // Get Metrics Configurations
-      try {
-        const metricsCommand = new ListBucketMetricsConfigurationsCommand({ Bucket: bucketName });
-        const metricsResponse = await client.send(metricsCommand);
-        if (metricsResponse.MetricsConfigurationList) {
-          metadataConfig.metrics = metricsResponse.MetricsConfigurationList.map(config => ({
-            id: config.Id,
-            filter: config.Filter ? {
-              prefix: config.Filter.Prefix,
-              tags: config.Filter.And?.Tags?.map(tag => ({ key: tag.Key, value: tag.Value })) || 
-                    (config.Filter.Tag ? [{ key: config.Filter.Tag.Key, value: config.Filter.Tag.Value }] : [])
-            } : null
-          }));
-        }
-      } catch (error) {
-        // Metrics configurations may not exist or user may not have permissions
-        if (!error.name?.includes('NoSuchConfiguration') && !error.name?.includes('AccessDenied')) {
-          console.warn(`Failed to get metrics config for ${bucketName}:`, error.message);
-        }
-      }
-
-      // Only return configuration if at least one type has configurations
-      const hasAnyConfig = metadataConfig.inventory.length > 0 || 
-                          metadataConfig.analytics.length > 0 || 
-                          metadataConfig.metrics.length > 0;
-
-      return hasAnyConfig ? metadataConfig : null;
-    } catch (error) {
-      console.error('Error getting bucket metadata configuration:', error);
-      return null; // Return null instead of throwing to avoid breaking bucket listing
-    }
+    // Temporarily disabled metadata configuration to troubleshoot basic functionality
+    console.log('Metadata configuration temporarily disabled for troubleshooting');
+    return null;
   }
 }
 
