@@ -1,12 +1,12 @@
 <template>
-  <div class="bg-white shadow rounded-lg p-6">
+  <div class="bg-white border border-secondary-200 rounded-lg shadow-sm p-4">
     <div class="flex items-center justify-between mb-4">
-      <h3 class="text-lg font-medium text-gray-900">Search by Metadata</h3>
+      <h3 class="text-sm font-semibold text-secondary-900">Filter Objects</h3>
       <button
         @click="clearFilters"
-        class="text-sm text-gray-500 hover:text-gray-700 focus:outline-none"
+        class="text-sm text-secondary-500 hover:text-secondary-700 font-medium underline focus:outline-none"
       >
-        Clear All
+        Clear filters
       </button>
     </div>
     

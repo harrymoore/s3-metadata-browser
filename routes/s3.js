@@ -75,9 +75,16 @@ router.get('/buckets/:bucketName/objects-with-metadata', async (req, res) => {
             metadata
           };
         } catch (error) {
+          console.error(`Failed to get metadata for ${obj.Key}:`, error.message);
           return {
             ...obj,
-            metadata: { error: 'Failed to fetch metadata' }
+            metadata: { 
+              error: 'Failed to fetch metadata',
+              contentType: 'Unknown',
+              contentLength: obj.Size,
+              lastModified: obj.LastModified,
+              storageClass: obj.StorageClass || 'STANDARD'
+            }
           };
         }
       })
