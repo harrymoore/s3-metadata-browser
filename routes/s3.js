@@ -6,7 +6,31 @@ const s3Service = require('../services/s3Service');
 router.get('/buckets', async (req, res) => {
   try {
     const buckets = await s3Service.listBuckets();
-    res.json(buckets);
+    
+    // Optionally include metadata configuration for each bucket
+    const includeMetadataConfig = req.query.includeMetadataConfig === 'true';
+    
+    if (includeMetadataConfig) {
+      // Get metadata configuration for each bucket (in parallel for better performance)
+      const bucketsWithConfig = await Promise.all(
+        buckets.map(async (bucket) => {
+          try {
+            const metadataConfig = await s3Service.getBucketMetadataConfiguration(bucket.Name);
+            return {
+              ...bucket,
+              metadataConfiguration: metadataConfig
+            };
+          } catch (error) {
+            console.warn(`Failed to get metadata config for ${bucket.Name}:`, error.message);
+            return bucket; // Return bucket without metadata config on error
+          }
+        })
+      );
+      
+      res.json(bucketsWithConfig);
+    } else {
+      res.json(buckets);
+    }
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

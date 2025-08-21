@@ -304,7 +304,7 @@ export default {
       this.error = null
       
       try {
-        const response = await s3Api.getBuckets()
+        const response = await s3Api.get('/buckets?includeMetadataConfig=true')
         this.buckets = response.data
       } catch (error) {
         console.error('Error loading buckets:', error)
