@@ -12,7 +12,7 @@
     </div>
 
     <!-- Search and Sort Controls -->
-    <div v-if="!loading && buckets.length > 0" class="bg-white border border-dark-200 rounded shadow-sm p-3">
+    <div v-if="!loading && buckets.length > 0" class="bg-dark-50 border border-dark-300 rounded shadow-sm p-3">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0 sm:space-x-3">
         <!-- Search -->
         <div class="flex-1 max-w-sm">
@@ -27,7 +27,7 @@
               v-model="searchQuery"
               type="text"
               placeholder="Search buckets..."
-              class="block w-full pl-8 pr-2 py-1.5 border border-dark-300 rounded text-sm placeholder-dark-500 bg-white text-dark-900 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+              class="block w-full pl-8 pr-2 py-1.5 border border-dark-400 rounded text-sm placeholder-dark-500 bg-white text-dark-900 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
             />
           </div>
         </div>
@@ -37,7 +37,7 @@
           <label class="text-sm font-medium text-dark-800">Sort:</label>
           <select
             v-model="sortBy"
-            class="border border-dark-300 rounded px-2 py-1.5 text-sm bg-white text-dark-900 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+            class="border border-dark-400 rounded px-2 py-1.5 text-sm bg-white text-dark-900 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
           >
             <option value="name">Name</option>
             <option value="creationDate">Date</option>
@@ -45,7 +45,7 @@
           </select>
           <button
             @click="toggleSortOrder"
-            class="p-1.5 border border-dark-300 rounded hover:bg-dark-100 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="p-1.5 border border-dark-400 rounded hover:bg-dark-200 focus:outline-none focus:ring-1 focus:ring-primary-500"
             :title="sortOrder === 'asc' ? 'Sort descending' : 'Sort ascending'"
           >
             <svg 
@@ -60,7 +60,7 @@
           </button>
           <button
             @click="resetFiltersAndSort"
-            class="px-2 py-1.5 text-xs font-medium text-dark-600 hover:text-dark-900 hover:bg-dark-100 rounded transition-colors"
+            class="px-2 py-1.5 text-xs font-medium text-dark-700 hover:text-dark-900 hover:bg-dark-200 rounded transition-colors"
             :disabled="!hasActiveFiltersOrSort"
             :class="{ 'opacity-50 cursor-not-allowed': !hasActiveFiltersOrSort }"
           >
@@ -103,12 +103,12 @@
     </div>
 
     <!-- Bucket List -->
-    <div v-else-if="filteredAndSortedBuckets.length > 0" class="bg-white border border-dark-200 rounded shadow-sm overflow-hidden">
-      <div class="divide-y divide-dark-200">
+    <div v-else-if="filteredAndSortedBuckets.length > 0" class="bg-dark-50 border border-dark-300 rounded shadow-sm overflow-hidden">
+      <div class="divide-y divide-dark-300">
         <div
           v-for="bucket in filteredAndSortedBuckets"
           :key="bucket.Name"
-          class="hover:bg-dark-100 cursor-pointer transition-colors"
+          class="hover:bg-dark-200 cursor-pointer transition-colors"
           @click="selectBucket(bucket.Name)"
         >
           <div class="px-4 py-3 flex items-center justify-between">

@@ -27,7 +27,7 @@
             'inline-flex items-center px-2 py-1.5 text-sm font-medium rounded border transition-colors',
             showSearch 
               ? 'bg-primary-600 text-white border-primary-600 hover:bg-primary-700' 
-              : 'bg-white text-dark-800 border-dark-300 hover:bg-dark-100'
+              : 'bg-dark-50 text-dark-800 border-dark-400 hover:bg-dark-200'
           ]"
         >
           <svg class="w-3 h-3 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

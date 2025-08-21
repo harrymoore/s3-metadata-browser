@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white border border-dark-200 rounded shadow-sm overflow-hidden">
+  <div class="bg-dark-50 border border-dark-300 rounded shadow-sm overflow-hidden">
     <!-- Loading State -->
     <div v-if="loading" class="flex items-center justify-center py-10">
       <div class="flex items-center space-x-2">
@@ -38,7 +38,7 @@
     <!-- Table -->
     <div v-else-if="objects.length > 0" class="overflow-x-auto">
       <table class="min-w-full divide-y divide-dark-200">
-        <thead class="bg-dark-100">
+        <thead class="bg-dark-200">
           <tr>
             <th class="px-3 py-2 text-left text-xs font-semibold text-dark-800 uppercase tracking-wider">
               Name
@@ -60,8 +60,8 @@
             </th>
           </tr>
         </thead>
-        <tbody class="bg-white divide-y divide-dark-200">
-          <tr v-for="object in objects" :key="object.Key" class="hover:bg-dark-100 transition-colors">
+        <tbody class="bg-dark-50 divide-y divide-dark-300">
+          <tr v-for="object in objects" :key="object.Key" class="hover:bg-dark-200 transition-colors">
             <td class="px-3 py-2">
               <div class="flex items-center">
                 <div class="w-5 h-5 bg-dark-300 rounded flex items-center justify-center flex-shrink-0">
