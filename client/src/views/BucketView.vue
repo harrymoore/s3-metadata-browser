@@ -6,17 +6,17 @@
         <nav class="flex items-center space-x-2 text-sm mb-1">
           <router-link 
             to="/" 
-            class="text-dark-500 hover:text-dark-700 font-medium transition-colors"
+            class="text-dark-600 hover:text-dark-800 font-medium transition-colors"
           >
             Buckets
           </router-link>
           <svg class="w-3 h-3 text-dark-400" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 111.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
           </svg>
-          <span class="text-dark-700 font-semibold truncate">{{ bucketName }}</span>
+          <span class="text-dark-800 font-semibold truncate">{{ bucketName }}</span>
         </nav>
-        <h1 class="text-lg font-bold text-dark-800">{{ bucketName }}</h1>
-        <p class="text-sm text-dark-600 mt-0.5">Objects and metadata</p>
+        <h1 class="text-lg font-bold text-dark-900">{{ bucketName }}</h1>
+        <p class="text-sm text-dark-700 mt-0.5">Objects and metadata</p>
       </div>
       
       <!-- Actions -->
@@ -27,7 +27,7 @@
             'inline-flex items-center px-2 py-1.5 text-sm font-medium rounded border transition-colors',
             showSearch 
               ? 'bg-primary-600 text-white border-primary-600 hover:bg-primary-700' 
-              : 'bg-dark-100 text-dark-700 border-dark-300 hover:bg-dark-200'
+              : 'bg-white text-dark-800 border-dark-300 hover:bg-dark-100'
           ]"
         >
           <svg class="w-3 h-3 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

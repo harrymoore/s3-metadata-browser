@@ -1,12 +1,12 @@
 <template>
-  <div class="bg-dark-100 border border-dark-200 rounded shadow-sm overflow-hidden">
+  <div class="bg-white border border-dark-200 rounded shadow-sm overflow-hidden">
     <!-- Loading State -->
     <div v-if="loading" class="flex items-center justify-center py-10">
       <div class="flex items-center space-x-2">
         <div class="w-2 h-2 bg-primary-600 rounded-full animate-bounce"></div>
         <div class="w-2 h-2 bg-primary-600 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
         <div class="w-2 h-2 bg-primary-600 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-        <span class="ml-2 text-sm text-dark-600">Loading...</span>
+        <span class="ml-2 text-sm text-dark-700">Loading...</span>
       </div>
     </div>
 
@@ -38,30 +38,30 @@
     <!-- Table -->
     <div v-else-if="objects.length > 0" class="overflow-x-auto">
       <table class="min-w-full divide-y divide-dark-200">
-        <thead class="bg-dark-200">
+        <thead class="bg-dark-100">
           <tr>
-            <th class="px-3 py-2 text-left text-xs font-semibold text-dark-700 uppercase tracking-wider">
+            <th class="px-3 py-2 text-left text-xs font-semibold text-dark-800 uppercase tracking-wider">
               Name
             </th>
-            <th class="px-3 py-2 text-left text-xs font-semibold text-dark-700 uppercase tracking-wider">
+            <th class="px-3 py-2 text-left text-xs font-semibold text-dark-800 uppercase tracking-wider">
               Size
             </th>
-            <th class="px-3 py-2 text-left text-xs font-semibold text-dark-700 uppercase tracking-wider">
+            <th class="px-3 py-2 text-left text-xs font-semibold text-dark-800 uppercase tracking-wider">
               Modified
             </th>
-            <th class="px-3 py-2 text-left text-xs font-semibold text-dark-700 uppercase tracking-wider">
+            <th class="px-3 py-2 text-left text-xs font-semibold text-dark-800 uppercase tracking-wider">
               Type
             </th>
-            <th class="px-3 py-2 text-left text-xs font-semibold text-dark-700 uppercase tracking-wider">
+            <th class="px-3 py-2 text-left text-xs font-semibold text-dark-800 uppercase tracking-wider">
               Class
             </th>
-            <th class="px-3 py-2 text-left text-xs font-semibold text-dark-700 uppercase tracking-wider">
+            <th class="px-3 py-2 text-left text-xs font-semibold text-dark-800 uppercase tracking-wider">
               Meta
             </th>
           </tr>
         </thead>
-        <tbody class="bg-dark-50 divide-y divide-dark-200">
-          <tr v-for="object in objects" :key="object.Key" class="hover:bg-dark-200 transition-colors">
+        <tbody class="bg-white divide-y divide-dark-200">
+          <tr v-for="object in objects" :key="object.Key" class="hover:bg-dark-100 transition-colors">
             <td class="px-3 py-2">
               <div class="flex items-center">
                 <div class="w-5 h-5 bg-dark-300 rounded flex items-center justify-center flex-shrink-0">
@@ -70,19 +70,19 @@
                   </svg>
                 </div>
                 <div class="ml-2 min-w-0 flex-1">
-                  <p class="text-sm font-medium text-dark-800 truncate" :title="object.Key">
+                  <p class="text-sm font-medium text-dark-900 truncate" :title="object.Key">
                     {{ object.Key }}
                   </p>
                 </div>
               </div>
             </td>
             <td class="px-3 py-2 whitespace-nowrap">
-              <span class="text-sm text-dark-700 font-mono">
+              <span class="text-sm text-dark-800 font-mono">
                 {{ formatFileSize(object.Size || object.metadata?.contentLength) }}
               </span>
             </td>
             <td class="px-3 py-2 whitespace-nowrap">
-              <span class="text-sm text-dark-600 font-mono">
+              <span class="text-sm text-dark-700 font-mono">
                 {{ formatDate(object.LastModified || object.metadata?.lastModified) }}
               </span>
             </td>

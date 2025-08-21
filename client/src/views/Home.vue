@@ -3,16 +3,16 @@
     <!-- Header -->
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="text-lg font-bold text-dark-800">S3 Buckets</h1>
-        <p class="text-sm text-dark-600 mt-0.5">Browse and analyze your AWS S3 storage buckets</p>
+        <h1 class="text-lg font-bold text-dark-900">S3 Buckets</h1>
+        <p class="text-sm text-dark-700 mt-0.5">Browse and analyze your AWS S3 storage buckets</p>
       </div>
-      <div v-if="!loading && buckets.length > 0" class="text-sm text-dark-500">
+      <div v-if="!loading && buckets.length > 0" class="text-sm text-dark-600">
         {{ filteredAndSortedBuckets.length }} of {{ buckets.length }} bucket{{ buckets.length !== 1 ? 's' : '' }}
       </div>
     </div>
 
     <!-- Search and Sort Controls -->
-    <div v-if="!loading && buckets.length > 0" class="bg-dark-100 border border-dark-200 rounded shadow-sm p-3">
+    <div v-if="!loading && buckets.length > 0" class="bg-white border border-dark-200 rounded shadow-sm p-3">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0 sm:space-x-3">
         <!-- Search -->
         <div class="flex-1 max-w-sm">
@@ -27,17 +27,17 @@
               v-model="searchQuery"
               type="text"
               placeholder="Search buckets..."
-              class="block w-full pl-8 pr-2 py-1.5 border border-dark-300 rounded text-sm placeholder-dark-500 bg-dark-50 text-dark-800 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+              class="block w-full pl-8 pr-2 py-1.5 border border-dark-300 rounded text-sm placeholder-dark-500 bg-white text-dark-900 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
             />
           </div>
         </div>
 
         <!-- Sort Controls -->
         <div class="flex items-center space-x-2">
-          <label class="text-sm font-medium text-dark-700">Sort:</label>
+          <label class="text-sm font-medium text-dark-800">Sort:</label>
           <select
             v-model="sortBy"
-            class="border border-dark-300 rounded px-2 py-1.5 text-sm bg-dark-50 text-dark-800 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+            class="border border-dark-300 rounded px-2 py-1.5 text-sm bg-white text-dark-900 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
           >
             <option value="name">Name</option>
             <option value="creationDate">Date</option>
@@ -45,7 +45,7 @@
           </select>
           <button
             @click="toggleSortOrder"
-            class="p-1.5 border border-dark-300 rounded hover:bg-dark-200 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="p-1.5 border border-dark-300 rounded hover:bg-dark-100 focus:outline-none focus:ring-1 focus:ring-primary-500"
             :title="sortOrder === 'asc' ? 'Sort descending' : 'Sort ascending'"
           >
             <svg 
@@ -60,7 +60,7 @@
           </button>
           <button
             @click="resetFiltersAndSort"
-            class="px-2 py-1.5 text-xs font-medium text-dark-600 hover:text-dark-800 hover:bg-dark-200 rounded transition-colors"
+            class="px-2 py-1.5 text-xs font-medium text-dark-600 hover:text-dark-900 hover:bg-dark-100 rounded transition-colors"
             :disabled="!hasActiveFiltersOrSort"
             :class="{ 'opacity-50 cursor-not-allowed': !hasActiveFiltersOrSort }"
           >
@@ -103,12 +103,12 @@
     </div>
 
     <!-- Bucket List -->
-    <div v-else-if="filteredAndSortedBuckets.length > 0" class="bg-dark-100 border border-dark-200 rounded shadow-sm overflow-hidden">
+    <div v-else-if="filteredAndSortedBuckets.length > 0" class="bg-white border border-dark-200 rounded shadow-sm overflow-hidden">
       <div class="divide-y divide-dark-200">
         <div
           v-for="bucket in filteredAndSortedBuckets"
           :key="bucket.Name"
-          class="hover:bg-dark-200 cursor-pointer transition-colors"
+          class="hover:bg-dark-100 cursor-pointer transition-colors"
           @click="selectBucket(bucket.Name)"
         >
           <div class="px-4 py-3 flex items-center justify-between">
@@ -119,10 +119,10 @@
                 </svg>
               </div>
               <div class="ml-3 min-w-0 flex-1">
-                <h3 class="text-sm font-semibold text-dark-800 truncate">{{ bucket.Name }}</h3>
+                <h3 class="text-sm font-semibold text-dark-900 truncate">{{ bucket.Name }}</h3>
                 <div class="flex items-center space-x-3 mt-0.5">
-                  <p class="text-xs text-dark-500 font-mono">{{ formatDate(bucket.CreationDate) }}</p>
-                  <p v-if="objectCounts[bucket.Name] !== undefined" class="text-xs text-dark-500">
+                  <p class="text-xs text-dark-600 font-mono">{{ formatDate(bucket.CreationDate) }}</p>
+                  <p v-if="objectCounts[bucket.Name] !== undefined" class="text-xs text-dark-600">
                     {{ objectCounts[bucket.Name] }} object{{ objectCounts[bucket.Name] !== 1 ? 's' : '' }}
                   </p>
                   <div v-else-if="sortBy === 'objectCount'" class="flex items-center">
@@ -149,8 +149,8 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
       </div>
-      <h3 class="text-sm font-medium text-dark-800 mt-3">No buckets match your search</h3>
-      <p class="text-sm text-dark-600 mt-1">Try adjusting your search terms or clear the filter.</p>
+      <h3 class="text-sm font-medium text-dark-900 mt-3">No buckets match your search</h3>
+      <p class="text-sm text-dark-700 mt-1">Try adjusting your search terms or clear the filter.</p>
       <button
         @click="searchQuery = ''"
         class="mt-2 text-sm font-medium text-primary-600 hover:text-primary-700 underline"
@@ -166,8 +166,8 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
         </svg>
       </div>
-      <h3 class="text-sm font-medium text-dark-800 mt-3">No buckets found</h3>
-      <p class="text-sm text-dark-600 mt-1">You don't have access to any S3 buckets or none exist in this account.</p>
+      <h3 class="text-sm font-medium text-dark-900 mt-3">No buckets found</h3>
+      <p class="text-sm text-dark-700 mt-1">You don't have access to any S3 buckets or none exist in this account.</p>
     </div>
   </div>
 </template>

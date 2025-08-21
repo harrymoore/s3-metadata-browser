@@ -11,8 +11,8 @@
       <div class="absolute -top-1 -right-1 w-3 h-3 bg-warm-500 rounded-full border border-white"></div>
     </div>
     <div class="flex flex-col">
-      <span class="text-base font-bold text-dark-800 leading-none">S3 Meta</span>
-      <span class="text-xs font-medium text-dark-500 leading-none">Browser</span>
+      <span class="text-base font-bold text-dark-900 leading-none">S3 Meta</span>
+      <span class="text-xs font-medium text-dark-600 leading-none">Browser</span>
     </div>
   </div>
 </template>

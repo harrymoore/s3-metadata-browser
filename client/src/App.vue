@@ -1,11 +1,11 @@
 <template>
   <div id="app" class="min-h-screen bg-dark-50">
-    <nav class="bg-dark-100 border-b border-dark-200 shadow-sm">
+    <nav class="bg-white border-b border-dark-200 shadow-sm">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-12">
           <div class="flex items-center">
             <AppLogo />
-            <div class="ml-4 h-4 w-px bg-dark-300"></div>
+            <div class="ml-4 h-4 w-px bg-dark-200"></div>
             <div class="ml-4">
               <nav class="flex space-x-1">
                 <router-link 
@@ -13,7 +13,7 @@
                   class="px-2 py-1 text-sm font-medium rounded transition-colors"
                   :class="$route.name === 'Home' ? 
                     'bg-primary-600 text-white' : 
-                    'text-dark-600 hover:text-dark-800 hover:bg-dark-200'"
+                    'text-dark-600 hover:text-dark-900 hover:bg-dark-100'"
                 >
                   Buckets
                 </router-link>
