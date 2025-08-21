@@ -237,6 +237,99 @@ class S3Service {
     }
     return true;
   }
+
+  async getBucketMetadataConfiguration(bucketName) {
+    try {
+      let client = this.s3Client;
+      
+      // Get the correct client for the bucket's region
+      try {
+        const bucketRegion = await this.getBucketRegion(bucketName);
+        client = this.getRegionClient(bucketRegion);
+      } catch (error) {
+        console.warn(`Could not determine bucket region for ${bucketName}, using default client:`, error.message);
+      }
+
+      const metadataConfig = {
+        inventory: [],
+        analytics: [],
+        metrics: []
+      };
+
+      // Get Inventory Configurations
+      try {
+        const inventoryCommand = new ListBucketInventoryConfigurationsCommand({ Bucket: bucketName });
+        const inventoryResponse = await client.send(inventoryCommand);
+        if (inventoryResponse.InventoryConfigurationList) {
+          metadataConfig.inventory = inventoryResponse.InventoryConfigurationList.map(config => ({
+            id: config.Id,
+            frequency: config.Schedule?.Frequency,
+            format: config.Destination?.S3BucketDestination?.Format,
+            includedFields: config.OptionalFields || [],
+            enabled: config.IsEnabled
+          }));
+        }
+      } catch (error) {
+        // Inventory configurations may not exist or user may not have permissions
+        if (!error.name?.includes('NoSuchConfiguration') && !error.name?.includes('AccessDenied')) {
+          console.warn(`Failed to get inventory config for ${bucketName}:`, error.message);
+        }
+      }
+
+      // Get Analytics Configurations
+      try {
+        const analyticsCommand = new ListBucketAnalyticsConfigurationsCommand({ Bucket: bucketName });
+        const analyticsResponse = await client.send(analyticsCommand);
+        if (analyticsResponse.AnalyticsConfigurationList) {
+          metadataConfig.analytics = analyticsResponse.AnalyticsConfigurationList.map(config => ({
+            id: config.Id,
+            storageClassAnalysis: config.StorageClassAnalysis ? {
+              dataExport: config.StorageClassAnalysis.DataExport ? {
+                format: config.StorageClassAnalysis.DataExport.OutputSchemaVersion,
+                destination: config.StorageClassAnalysis.DataExport.Destination?.S3BucketDestination?.Bucket
+              } : null
+            } : null
+          }));
+        }
+      } catch (error) {
+        // Analytics configurations may not exist or user may not have permissions
+        if (!error.name?.includes('NoSuchConfiguration') && !error.name?.includes('AccessDenied')) {
+          console.warn(`Failed to get analytics config for ${bucketName}:`, error.message);
+        }
+      }
+
+      // Get Metrics Configurations
+      try {
+        const metricsCommand = new ListBucketMetricsConfigurationsCommand({ Bucket: bucketName });
+        const metricsResponse = await client.send(metricsCommand);
+        if (metricsResponse.MetricsConfigurationList) {
+          metadataConfig.metrics = metricsResponse.MetricsConfigurationList.map(config => ({
+            id: config.Id,
+            filter: config.Filter ? {
+              prefix: config.Filter.Prefix,
+              tags: config.Filter.And?.Tags?.map(tag => ({ key: tag.Key, value: tag.Value })) || 
+                    (config.Filter.Tag ? [{ key: config.Filter.Tag.Key, value: config.Filter.Tag.Value }] : [])
+            } : null
+          }));
+        }
+      } catch (error) {
+        // Metrics configurations may not exist or user may not have permissions
+        if (!error.name?.includes('NoSuchConfiguration') && !error.name?.includes('AccessDenied')) {
+          console.warn(`Failed to get metrics config for ${bucketName}:`, error.message);
+        }
+      }
+
+      // Only return configuration if at least one type has configurations
+      const hasAnyConfig = metadataConfig.inventory.length > 0 || 
+                          metadataConfig.analytics.length > 0 || 
+                          metadataConfig.metrics.length > 0;
+
+      return hasAnyConfig ? metadataConfig : null;
+    } catch (error) {
+      console.error('Error getting bucket metadata configuration:', error);
+      return null; // Return null instead of throwing to avoid breaking bucket listing
+    }
+  }
 }
 
 module.exports = new S3Service();
